@@ -1,5 +1,6 @@
 produtos = []
-
+vendas = []
+venda_produtos = []
 #-------------------------------inserir------------------------------------------//
 
 def inserir_produto():
@@ -14,11 +15,42 @@ def inserir_produto():
         produtos.append(produto)
         print("Produto cadastrado com sucesso!")
 
+def inserir_venda():
+    codigo_produto = input("Digite o código do produto: ")
+    codigo_venda = input("Digite o código da venda: ")
+    quantidade_prod = int(input("Insira a quantidade de produtos para a venda: "))
+    
+    if verifica_codigo_venda(codigo_venda):
+        print("Código venda já existente. Não é possível cadastrar á venda.")
+    else:
+        if quantidade_prod <= 0:
+            print("A quantidade vendida deve ser maior que zero.")
+            return
+        else:
+            if verificar_codigo_produto(codigo_produto):
+                for produto in produtos:
+                    if produto['codigo_prod'] == codigo_produto:
+                        valor = produto['preco_prod']                        
+                venda = {'codigo_venda': codigo_venda, 'quantidade_prod': quantidade_prod}
+                vendas.append(venda)
+                venda_produto = {'codigo_venda': codigo_venda, 'codigo_prod': codigo_produto, 'valor_total': quantidade_prod*valor}
+                venda_produtos.append(venda_produto)
+                print("Venda Cadastrada com Sucesso!")
+            else:
+                print("Produto não Encontrado!")   
+
+
 #-------------------------------verifica------------------------------------------//
 
 def verificar_codigo_produto(codigo_prod):
     for produto in produtos:
         if produto['codigo_prod'] == codigo_prod:
+            return True
+    return False
+
+def verifica_codigo_venda(codigo_venda):
+    for venda in vendas:
+        if venda['codigo_venda'] == codigo_venda:
             return True
     return False
 
@@ -31,6 +63,16 @@ def listar_produto_por_codigo(codigo_prod):
             return
     print("Produto não encontrado!")
 
+def listar_venda_por_codigo(codigo_venda):
+    for venda in vendas:
+        if venda['codigo_venda'] == codigo_venda:
+            print("Código: {}, Quantidade: {}".format(venda['codigo_venda'], venda['quantidade_prod']))
+    for venda_produto in venda_produtos:
+        if venda_produto['codigo_venda'] == codigo_venda:
+            print("Valor Total R$: {}".format(venda_produto['valor_total']))
+            return
+    print("Venda não encontrada!")
+
 #----------------------------------excluir---------------------------------------//
 
 def excluir_produto_por_codigo(codigo_prod):
@@ -40,6 +82,17 @@ def excluir_produto_por_codigo(codigo_prod):
             print("Produto excluído com sucesso!")
             return
     print("Produto não encontrado!")
+
+def excluir_venda_por_codigo(codigo_venda):
+    for venda in vendas:
+        if venda['codigo_venda'] == codigo_venda:
+            vendas.remove(venda)
+    for venda_produto in venda_produtos:
+        if venda_produto['codigo_venda'] == codigo_venda:
+            venda_produtos.remove(venda_produto)
+            print("Venda Excluída com Sucesso!")
+            return
+    print("Venda não encontrada!")
 
 #-----------------------------------alterar--------------------------------------//
 
@@ -54,6 +107,29 @@ def alterar_produto_por_codigo(codigo):
             print("Produto alterado com sucesso!")
             return
     print("Produto não encontrado!")
+
+def alterar_venda_por_codigo(codigo_venda):
+    if verifica_codigo_venda(codigo_venda):
+        for venda in vendas:
+            if venda['codigo_venda'] == codigo_venda:
+                print("Venda encontrada! Insira as novas informações: ")
+                quantidade_prod = int(input("Digite a nova quantidades de produtos: "))
+                venda['quantidade_prod'] = quantidade_prod
+
+        for venda_produto in venda_produtos:
+            if venda_produto['codigo_venda'] == codigo_venda:
+                codigo_produto = venda_produto['codigo_prod']
+
+        for produto in produtos:
+            if produto['codigo_prod'] == codigo_produto:
+                preco = produto['preco_prod']
+
+        for venda_produto in venda_produtos:
+            if venda_produto['codigo_venda'] == codigo_venda:
+                venda_produto['valor_total'] = quantidade_prod*preco
+                print("Venda alterado com sucesso!")
+    else:
+        print("Venda não encontrada!")
 
 #------------------------------------menus-------------------------------------//
 
@@ -89,15 +165,53 @@ def cadastro_produto():
         else:
             print("Opção inválida!")
 
+def cadastro_venda():
+    while True:
+        print("\n----- MENU VENDA ------")
+        print("1 - Inserir venda")
+        print("2 - Listar todas vendas")
+        print("3 - Listar venda por código")
+        print("4 - Excluir Venda")
+        print("5 - Alterar Venda")
+        print("0 - Sair")
+
+        opcao = input("Escolhe uma opção: ")
+
+        if opcao == "1":
+            inserir_venda()
+        elif opcao == "2":
+            print("Vendas cadastradas: ")
+            for venda in vendas:
+                print("Código Venda: {}, Quantidade: {}".format(venda['codigo_venda'], venda['quantidade_prod']))
+            for venda_produto in venda_produtos:
+                print("Valor Total R$: {}".format(venda_produto['valor_total']))
+        elif opcao == "3":
+            codigo_venda = input("Digite o código da venda que deseja listar: ")
+            listar_venda_por_codigo(codigo_venda)
+        elif opcao == "4":
+            codigo_venda = input("Digite o código da venda que deseja excluir: ")
+            excluir_venda_por_codigo(codigo_venda)
+        elif opcao == "5":
+            codigo_venda = input("Digite o código da venda que deseja alterar: ")
+            alterar_venda_por_codigo(codigo_venda)
+        elif opcao == "0":
+            return False
+        else:
+            print("Opção inválida!")
+
+
 while True:
     print ("\n----- MENU PRINCIPAL -----")
     print ("1 - Inserir um novo Produto")
+    print ("2 - Inserir uma nova Venda")
     print ("0 - Sair")
 
     opcao = input("Escolha uma Opção: ")
 
     if opcao == "1":
         cadastro_produto()
+    elif opcao == "2":
+        cadastro_venda()
     elif opcao == "0":
         break
     else:
