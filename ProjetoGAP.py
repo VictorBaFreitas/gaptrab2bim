@@ -76,6 +76,10 @@ def listar_venda_por_codigo(codigo_venda):
 #----------------------------------excluir---------------------------------------//
 
 def excluir_produto_por_codigo(codigo_prod):
+    for venda_produto in venda_produtos:
+        if venda_produto['codigo_prod'] == codigo_prod:
+            print('Venda existente neste código!')
+            return
     for produto in produtos:
         if produto['codigo_prod'] == codigo_prod:
             produtos.remove(produto)
@@ -96,9 +100,13 @@ def excluir_venda_por_codigo(codigo_venda):
 
 #-----------------------------------alterar--------------------------------------//
 
-def alterar_produto_por_codigo(codigo):
+def alterar_produto_por_codigo(codigo_prod):
+    for venda_produto in venda_produtos:
+        if venda_produto['codigo_prod'] == codigo_prod:
+            print('Venda existente neste código!')
+            return
     for produto in produtos:
-        if produto['codigo_prod'] == codigo:
+        if produto['codigo_prod'] == codigo_prod:
             print("Produto encontrado. Insira as novas informações:")
             nome_prod = input("Digite o novo nome do produto: ")
             preco_prod = float(input("Digite o novo preço do produto: "))
